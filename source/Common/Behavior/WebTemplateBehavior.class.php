@@ -77,17 +77,17 @@ class WebTemplateBehavior {
                     array(
                         'icon'  => 'paypal',
                         'title' => '支付宝服务窗',
-                        'url'   => U('control/account/list')
+                        'url'   => U('control/platform/alipay')
                     ),
                     array(
                         'icon'  => 'comments',
                         'title' => '微信公众号',
-                        'url'   => U('control/account/list')
+                        'url'   => U('control/platform/weixin')
                     ),
                     array(
                         'icon'  => 'mobile-phone',
                         'title' => '定制自有App',
-                        'url'   => U('control/account/open')
+                        'url'   => U('control/platform/open')
                     ),
                 )
             ),

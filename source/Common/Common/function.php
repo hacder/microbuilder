@@ -49,32 +49,6 @@ function coll_elements($keys, $src, $default = false) {
 }
 
 /**
- * 判断一个数是否介于一个区间或将一个数转换为此区间的数.
- *
- * @param string $num 输入参数
- * @param int $downline 参数下限
- * @param int $upline 参数上限
- * @param string $returnNear 对输入参数是判断还是返回
- * @return boolean | number
- * <pre>
- *  boolean 判断输入参数是否介于 $downline 和 $upline 之间
- *  number 将输入参数转换为介于  $downline 和 $upline 之间的整数
- * </pre>
- */
-function range_limit($num, $downline, $upline, $returnNear = true) {
-    $num = intval($num);
-    $downline = intval($downline);
-    $upline = intval($upline);
-    if($num < $downline){
-        return empty($returnNear) ? false : $downline;
-    } elseif ($num > $upline) {
-        return empty($returnNear) ? false : $upline;
-    } else {
-        return empty($returnNear) ? true : $num;
-    }
-}
-
-/**
  * 生成分页数据
  * @param int $currentPage 当前页码
  * @param int $totalCount 总记录数
@@ -196,4 +170,78 @@ function util_random($length, $numeric = false) {
         $hash .= $seed{mt_rand(0, $max)};
     }
     return $hash;
+}
+
+/**
+ * 判断一个数是否介于一个区间或将一个数转换为此区间的数.
+ *
+ * @param string $num 输入参数
+ * @param int $downline 参数下限
+ * @param int $upline 参数上限
+ * @param string $returnNear 对输入参数是判断还是返回
+ * @return boolean | number
+ * <pre>
+ *  boolean 判断输入参数是否介于 $downline 和 $upline 之间
+ *  number 将输入参数转换为介于  $downline 和 $upline 之间的整数
+ * </pre>
+ */
+function util_limit($num, $downline, $upline, $returnNear = true) {
+    $num = intval($num);
+    $downline = intval($downline);
+    $upline = intval($upline);
+    if($num < $downline){
+        return empty($returnNear) ? false : $downline;
+    } elseif ($num > $upline) {
+        return empty($returnNear) ? false : $upline;
+    } else {
+        return empty($returnNear) ? true : $num;
+    }
+}
+
+function util_curd($instance, $prefix, $dos = array()) {
+    $curd = array('list', 'create', 'modify', 'delete');
+    $dos = array_merge($curd, $dos);
+    $do = I('get.do');
+    $do = in_array($do, $dos) ? $do : $dos[0];
+    $method = $prefix . ucfirst($do);
+    if(method_exists($instance, $method)) {
+        call_user_func(array($instance, $method));
+        return '';
+    }
+    return $do;
+}
+
+/**
+ * 构造错误数组
+ *
+ * @param int $errno 错误码，0为无任何错误。
+ * @param string $errormsg 错误信息，通知上层应用具体错误信息。
+ * @return array
+ */
+function error($errno, $message = '') {
+    return array(
+        'errno' => $errno,
+        'message' => $message,
+    );
+}
+
+/**
+ * 检测返回值是否产生错误
+ *
+ * 产生错误则返回true，否则返回false
+ *
+ * @param mixed $data 待检测的数据
+ * @return boolean
+ */
+function is_error($data) {
+    if (empty($data) || !is_array($data) || !array_key_exists('errno', $data) || (array_key_exists('errno', $data) && $data['errno'] == 0)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+function import_third($class) {
+    import('Third.' . $class, MB_ROOT . 'source/Core/', '.php');
 }

@@ -3,8 +3,8 @@
  * 用户会话
  */
 namespace Wander\Controller;
-use Common\Model\Acl;
-use Common\Model\Utility;
+use Core\Model\Acl;
+use Core\Model\Utility;
 use Think\Controller;
 class AccountController extends Controller {
 

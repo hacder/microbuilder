@@ -14,10 +14,11 @@ $cfg = array(
     'DEFAULT_THEME'         =>  'default',
     'URL_HTML_SUFFIX'       =>  '',
 
-    'TAGLIB_BUILD_IN'       =>  'cx,Common\Extend\Tags',
+    'TAGLIB_BUILD_IN'       =>  'cx,Core\Util\Tags',
 
     'AUTOLOAD_NAMESPACE'    =>  array(
-        'Common'      =>  COMMON_PATH
+        'Common'      =>  COMMON_PATH,
+        'Core'      =>  MB_ROOT . 'source/Core/',
     ),
 
     'DB_TYPE'   =>  'PDO',

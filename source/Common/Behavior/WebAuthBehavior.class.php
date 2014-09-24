@@ -3,13 +3,16 @@
  * 会话处理
  */
 namespace Common\Behavior;
-use Common\Model\Acl;
+use Core\Model\Acl;
 
 class WebAuthBehavior {
     public function run(&$params) {
         $module = MODULE_NAME;
         $controller = CONTROLLER_NAME;
         $action = ACTION_NAME;
+        if(in_array($module, array('Wander', 'Api'))) {
+            return;
+        }
 
         $user = session('user');
         if(!empty($user)) {
@@ -31,7 +34,7 @@ class WebAuthBehavior {
         }
 
         //无用户身份, 只能访问Wander
-        if((empty($session) || empty($session['USER'])) && !in_array($module, array('Wander'))) {
+        if((empty($session) || empty($session['USER'])) && !in_array($module, array('Wander', 'Api'))) {
             redirect(U('/wander'));
             exit;
         }

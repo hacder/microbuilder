@@ -13,7 +13,7 @@ require.config({
 		'underscore': '../lib/underscore-min',
 		'chart': '../lib/chart.min',
 		'moment': '../lib/moment',
-		'filestyle': '../lib/bootstrap-filestyle.min',
+		'fileinput': '../../components/fileinput/fileinput.min',
 		'datetimepicker': '../../components/datetimepicker/bootstrap-datetimepicker.min',
 		'daterangepicker': '../../components/daterangepicker/daterangepicker',
 		'colorpicker': '../../components/colorpicker/spectrum',
@@ -56,9 +56,9 @@ require.config({
 		'chart': {
 			exports: 'Chart'
 		},
-		'filestyle': {
+		'fileinput': {
 			exports: '$',
-			deps: ['bootstrap']
+			deps: ['bootstrap', 'css!../../components/fileinput/fileinput.min.css']
 		},
 		'datetimepicker': {
 			exports: '$',

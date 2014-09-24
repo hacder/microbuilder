@@ -3,7 +3,7 @@
  * 用户管理
  */
 namespace Control\Controller;
-use Common\Model\Acl;
+use Core\Model\Acl;
 use Think\Controller;
 
 class AclController extends Controller {
@@ -48,7 +48,7 @@ class AclController extends Controller {
                 $input = coll_elements(array('title', 'status', 'remark'), I('post.'));
                 $input['title'] = trim($input['title']);
                 if(empty($input['title'])) {
-                    $this->error('请输入用户名及登陆密码');
+                    $this->error('请输入用户组名称');
                 }
                 $input['status'] = $input['status'] == '-1' ? '-1' : '0';
                 $input['parent'] = '0';

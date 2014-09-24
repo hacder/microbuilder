@@ -1,33 +1,12 @@
 <?php
-namespace Common\Model;
+namespace Core\Model;
 use Think\Model;
 
-class Member extends Model {
+class Acl extends Model {
     protected $autoCheckFields = false;
 
     const STATUS_DISABLED = '-1';
     const STATUS_ENABLED = '0';
-     /**
-     * 选项: 会员策略
-     */
-    const OPT_POLICY = 'POLICY';
-
-    public static function loadSettings($flush = false) {
-        $s = C('MS');
-        if(empty($s) || $flush) {
-            $keys = array();
-            $keys[] = self::OPT_POLICY;
-            $s = Utility::loadSettings('Member', $keys);
-            C('MS', $s);
-        }
-    }
-
-    public static function saveSettings($settings) {
-        $keys = array();
-        $keys[] = self::OPT_POLICY;
-        $settings = coll_elements($keys, $settings);
-        return Utility::saveSettings('Member', $settings);
-    }
 
     public function getRoles($withDisabled = false) {
         $ret = array();

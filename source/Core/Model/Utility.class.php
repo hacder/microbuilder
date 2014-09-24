@@ -1,5 +1,5 @@
 <?php
-namespace Common\Model;
+namespace Core\Model;
 use Think\Model;
 
 class Utility extends Model {
@@ -24,13 +24,15 @@ class Utility extends Model {
             $key = strtoupper($key);
             $condition .= "'{$moduleName}:{$key}',";
         }
+        unset($key);
         $condition = rtrim($condition, ',');
         $condition .= ')';
         $settings = $m->table('__CORE_SETTINGS__')->where($condition)->select();
+        $settings = coll_key($settings, 'key');
         $s = array();
         foreach($keys as $key) {
             $origKey = "{$moduleName}:{$key}";
-            $s[$key] = unserialize($settings[$origKey]);
+            $s[$key] = unserialize($settings[$origKey]['value']);
         }
         return $s;
     }
@@ -55,6 +57,46 @@ class Utility extends Model {
             return false;
         }
         $m = new Model();
-        return $m->table('__CORE_SETTINGS__')->addAll($ds);
+        foreach($ds as $key => $value) {
+            $rec = array();
+            $rec['key'] = $key;
+            $rec['value'] = $value;
+            $m->table('__CORE_SETTINGS__')->add($rec, array(), true);
+        }
+        return true;
+    }
+
+    public static function sslGenKey() {
+        $config = array(
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            'private_key_bits' => 1024,
+            'config' => MB_ROOT . 'source/Data/openssl.cnf'
+        );
+        $res = openssl_pkey_new($config);
+        if(empty($res)) {
+            return error(-1, openssl_error_string());
+        }
+        $public = openssl_pkey_get_details($res);
+        if(empty($public)) {
+            return error(-2, openssl_error_string());
+        }
+        $r = openssl_pkey_export($res, $private, null, $config);
+        if(empty($r)) {
+            return error(-3, openssl_error_string());
+        }
+        openssl_free_key($res);
+        $ret = array();
+        $ret['public'] = $public['key'];
+        $ret['private'] = $private;
+        return $ret;
+    }
+
+    public static function sslTrimKey($key) {
+        $pub = str_replace('-----BEGIN PUBLIC KEY-----', '', $key);
+        $pub = str_replace('-----END PUBLIC KEY-----', '', $pub);
+        $pub = trim($pub);
+        $pub = str_replace("\r", '', $pub);
+        $pub = str_replace("\n", '', $pub);
+        return $pub;
     }
 }

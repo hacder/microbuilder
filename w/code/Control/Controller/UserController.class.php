@@ -3,8 +3,8 @@
  * 用户管理
  */
 namespace Control\Controller;
-use Common\Model\Acl;
-use Common\Model\Utility;
+use Core\Model\Acl;
+use Core\Model\Utility;
 use Think\Controller;
 
 class UserController extends Controller {
