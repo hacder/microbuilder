@@ -39,7 +39,7 @@ class Acl extends Model {
         return $ret;
     }
 
-    public function deleteRole($id) {
+    public function removeRole($id) {
         $id = intval($id);
         $ret = $this->table('__USR_ROLES__')->where("`id`={$id}")->delete();
         return !!$ret;

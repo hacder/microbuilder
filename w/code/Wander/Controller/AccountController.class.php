@@ -13,6 +13,7 @@ class AccountController extends Controller {
     }
 
     public function loginAction() {
+        session_start();
         if(IS_POST) {
             $username = I('post.username');
             $password = I('post.password');
@@ -39,6 +40,7 @@ class AccountController extends Controller {
     }
 
     public function logoutAction() {
+        session_start();
         session(null);
         $this->success('成功退出系统');
     }

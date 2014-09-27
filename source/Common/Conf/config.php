@@ -7,6 +7,7 @@ $cfg = array(
     'CHECK_APP_DIR'         =>  false,
     'SHOW_PAGE_TRACE'       =>  true,
     'ACTION_SUFFIX'         =>  'Action',
+    'SESSION_AUTO_START'    =>  false,
 
     'DEFAULT_MODULE'        =>  'Home',
     'DEFAULT_CONTROLLER'    =>  'Home',
@@ -17,8 +18,9 @@ $cfg = array(
     'TAGLIB_BUILD_IN'       =>  'cx,Core\Util\Tags',
 
     'AUTOLOAD_NAMESPACE'    =>  array(
-        'Common'      =>  COMMON_PATH,
-        'Core'      =>  MB_ROOT . 'source/Core/',
+        'Common'            =>  COMMON_PATH,
+        'Core'              =>  MB_ROOT . 'source/Core/',
+        'Addon'             =>  MB_ROOT . 'addons/'
     ),
 
     'DB_TYPE'   =>  'PDO',

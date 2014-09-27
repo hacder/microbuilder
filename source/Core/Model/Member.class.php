@@ -101,7 +101,7 @@ class Member extends Model {
         return $ret;
     }
 
-    public function deleteGroup($id) {
+    public function removeGroup($id) {
         $id = intval($id);
         $ret = $this->table('__MMB_GROUPS__')->where("`id`={$id}")->delete();
         return !!$ret;

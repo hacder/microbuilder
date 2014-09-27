@@ -51,7 +51,7 @@ class MemberController extends Controller {
                 $this->assign('entity', $group);
                 if(!empty($group)) {
                     if(I('get.do') == 'delete') {
-                        if($m->deleteGroup($id)) {
+                        if($m->removeGroup($id)) {
                             $this->success('成功删除会员组', U('control/member/groups'));
                             exit;
                         } else {
@@ -156,6 +156,7 @@ class MemberController extends Controller {
             $this->assign('policy', $policy);
         }
         $this->assign('do', $do);
+        C('FRAME_CURRENT', U('control/member/credit'));
         $this->display();
     }
 }

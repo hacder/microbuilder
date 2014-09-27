@@ -5,6 +5,7 @@
 
 namespace Core\Platform;
 
+use Core\Model\Account;
 use Think\Model;
 
 abstract class Platform {
@@ -15,20 +16,58 @@ abstract class Platform {
     const POCKET_TEXT = 'text';
     /**
      * 回复图文消息
+     * 消息定义为元素集合, 每个元素结构定义为
+     * title        - string: 新闻标题,
+     * description  - string: 新闻描述,
+     * picurl       - string: 图片链接,
+     * url          - string: 原文链接
      */
     const POCKET_NEWS = 'news';
 
+
+    /**
+     * &nbsp;&nbsp;&nbsp;通用类型: text, image, voice, video, location, link,
+     * &nbsp;&nbsp;&nbsp;扩展类型: subscribe, unsubscribe, qr, trace, menu_click, menu_view, menu_scan, menu_scan_waiting, menu_photo, menu_photo_album, menu_album, menu_location, enter
+     * 类型说明:
+     * &nbsp;&nbsp;&nbsp;通用类型: 文本消息, 图片消息, 音频消息, 视频消息, 位置消息, 链接消息,
+     * &nbsp;&nbsp;&nbsp;扩展类型: 开始关注, 取消关注, 扫描二维码, 追踪位置, 点击菜单(模拟关键字), 点击菜单(链接), 进入聊天窗口
+     */
+
+    /**
+     * 粉丝发送文字消息
+     */
+    const MSG_TEXT = 'text';
+    /**
+     * 粉丝发送图片消息
+     */
+    const MSG_IMAGE = 'image';
+    /**
+     * 粉丝关注
+     */
+    const MSG_SUBSCRIBE = 'subscribe';
+    /**
+     * 粉丝取消关注
+     */
+    const MSG_UNSUBSCRIBE = 'unsubscribe';
+    /**
+     * 粉丝进入对话
+     */
+    const MSG_ENTER = 'enter';
+    /**
+     * 粉丝点击菜单
+     */
+    const MSG_MENU_CLICK = 'menu_click';
 
     /**
      * 创建平台特定的公众号操作对象
      * @param int $id 公众号编号
      * @return Platform|null
      */
-    public static function create($id, $type) {
-        $p = new \Core\Model\Account();
-        $platform = $p->getPlatform($id, $type);
+    public static function create($id) {
+        $p = new Account();
+        $platform = $p->getPlatform($id);
         if(!empty($platform)) {
-            if($type == \Core\Model\Account::ACCOUNT_ALIPAY) {
+            if($platform['type'] == Account::ACCOUNT_ALIPAY) {
                 return new Alipay($platform);
             }
         }
@@ -47,7 +86,7 @@ abstract class Platform {
      *
 *@return \Core\Model\Account
      */
-    public function getPlatform() {
+    public function getAccount() {
         trigger_error('not supported.', E_USER_WARNING);
     }
 
@@ -64,12 +103,48 @@ abstract class Platform {
      * @retun boolean
      */
     public function touchCheck() {
-        $platform = $this->getPlatform();
-        if(!empty($platform)) {
+        $account = $this->getAccount();
+        if(!empty($account)) {
             $rec = array();
             $rec['isconnect'] = 1;
             $m = new Model();
-            $m->table('__PLATFORMS__')->data($rec)->where("`id`='{$platform['id']}'")->save();
+            $m->table('__PLATFORMS__')->data($rec)->where("`id`='{$account['id']}'")->save();
+        }
+    }
+
+    /**
+     * 登记当前消息中的用户资料, 在派生类中实现时, 应至少传递 openid, unionid, subscribe, subscribetime, unsubscribetime, tag
+     * @param $message
+     * @return boolean
+     */
+    public function booking($message) {
+        $account = $this->getAccount();
+        if(!empty($account) && !empty($message)) {
+            $fan = coll_elements(array('openid', 'unionid', 'subscribe', 'subscribetime', 'unsubscribetime', 'tag'), $message);
+            $fan['platformid'] = $account['id'];
+            $condition = '`platformid`=:platformid AND `openid`=:openid';
+            $pars = array();
+            $pars[':platformid'] = $fan['platformid'];
+            $pars[':openid'] = $fan['openid'];
+            $m = new Model();
+            $fanid = $m->table('__MMB_MAPPING_FANS__')->where($condition)->bind($pars)->getField('`fanid`');
+            if(empty($fanid)) {
+                $fan['uid'] = 0;
+                //判断用户中心策略
+                $fan['salt'] = util_random(8);
+                if(empty($fan['subscribetime'])) {
+                    $fan['subscribetime'] = TIMESTAMP;
+                }
+                $m->table('__MMB_MAPPING_FANS__')->data($fan)->add();
+            } else {
+                if(empty($fan['subscribetime'])) {
+                    unset($fan['subscribetime']);
+                }
+                if(empty($fan['unsubscribetime'])) {
+                    unset($fan['unsubscribetime']);
+                }
+                $m->table('__MMB_MAPPING_FANS__')->data($fan)->where("`fanid`='{$fanid}'")->save();
+            }
         }
     }
 

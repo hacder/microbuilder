@@ -35,7 +35,7 @@ class AclController extends Controller {
                 $this->assign('entity', $role);
                 if(!empty($role)) {
                     if(I('get.do') == 'delete') {
-                        if($this->acl->deleteRole($id)) {
+                        if($this->acl->removeRole($id)) {
                             $this->success('成功删除用户组', U('control/acl/roles'));
                             exit;
                         } else {

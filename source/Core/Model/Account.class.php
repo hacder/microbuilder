@@ -5,8 +5,14 @@ use Think\Upload;
 
 class Account extends Model {
     protected $autoCheckFields = false;
+    /**
+     * 账号类型为服务窗
+     */
     const ACCOUNT_ALIPAY = 'alipay';
-
+    /**
+     * 账号类型为微信公众号
+     */
+    const ACCOUNT_WEIXIN = 'weixin';
 
     public function create($type) {
         $rec = array();

@@ -14,6 +14,7 @@ class WebAuthBehavior {
             return;
         }
 
+        session_start();
         $user = session('user');
         if(!empty($user)) {
             $session = array();

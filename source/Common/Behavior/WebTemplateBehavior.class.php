@@ -3,6 +3,9 @@
  * 模板预处理
  */
 namespace Common\Behavior;
+use Core\Model\Addon;
+use Think\Model;
+
 class WebTemplateBehavior {
     public function run(&$params) {
         if(MODULE_NAME == 'Bench') {
@@ -28,6 +31,7 @@ class WebTemplateBehavior {
             $names[] = 'cms';
             $names[] = 'uc';
             $names[] = 'extend';
+            $names[] = 'addons';
             $names[] = 'analyze';
             $name = in_array($name, $names) ? $name : 'summary';
         }
@@ -40,8 +44,54 @@ class WebTemplateBehavior {
             $names[] = 'member';
             $names[] = 'access';
             $names[] = 'extend';
+            $names[] = 'addons';
             $names[] = 'store';
             $name = in_array($name, $names) ? $name : 'common';
+        }
+
+        $allAddons = array();
+        if($name == 'extend') {
+            $types = Addon::types();
+            unset($types['app']);
+            foreach($types as $type) {
+                $addons = Addon::getAddons($type['name']);
+                $allAddons = array_merge($allAddons, coll_key($addons, 'name'));
+                $items = array();
+                if(!empty($addons)) {
+                    foreach($addons as $a) {
+                        $addon = new Addon($a);
+                        $entries = $addon->getEntries(strtolower(MODULE_NAME));
+                        if(!empty($entries)) {
+                            $items[] = array('icon' => 'plus', 'title' => $a['title'], 'url' => U('/bench/extend/' . $a['name']));
+                        }
+                    }
+                }
+                if(!empty($items)) {
+                    $frames['extend'][] = array(
+                        'title' => $type['title'],
+                        'items' => $items
+                    );
+                }
+            }
+        }
+        if($name == 'addons') {
+            if(defined('ADDON_NAME')) {
+                $a = C('ADDON_INSTANCE');
+                $addon = $a->getCurrentAddon();
+                $entries = $a->getEntries(strtolower(MODULE_NAME));
+                $items = array();
+                foreach($entries as $entry) {
+                    $items[] = array(
+                        'icon'  => 'plus',
+                        'url'   => $entry['url'],
+                        'title' => $entry['title'],
+                    );
+                }
+                $frames['addons'][] = array(
+                    'title' => $addon['title'],
+                    'items' => $items
+                );
+            }
         }
 
         C('FRAME_ACTIVE', $name);
@@ -435,7 +485,7 @@ class WebTemplateBehavior {
                     array(
                         'icon'  => 'plug',
                         'title' => '已安装的扩展',
-                        'url'   => U('control/extend/list')
+                        'url'   => U('bench/extend/list')
                     ),
                 )
             ),

@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * @param string $url
+ * @param string $vars
+ * @param bool $suffix
+ * @param bool $domain
+ */
+function AU($url='', $vars='') {
+    $entry = strtolower(MODULE_NAME);
+    $addon = strtolower(ADDON_NAME);
+    $url = "/{$entry}/{$addon}/{$url}";
+    return U($url, $vars);
+}
+    
+
 function coll_key($ds, $key) {
     if(!empty($ds) && !empty($key)) {
         $ret = array();

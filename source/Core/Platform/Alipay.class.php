@@ -5,6 +5,8 @@
 namespace Core\Platform;
 use Core\Model\Utility;
 use Core\Platform\Alipay\AliClient;
+use Think\Log;
+use Think\Model;
 
 class Alipay extends Platform {
     /**
@@ -18,7 +20,12 @@ class Alipay extends Platform {
     /**
      * @var array
      */
-    public  $params;
+    private $params;
+
+    /**
+     * @var array
+     */
+    private  $message;
 
     /**
      * 特定公众号平台的操作对象构造方法
@@ -31,7 +38,7 @@ class Alipay extends Platform {
         $this->params = I('post.', '', '');
     }
 
-    public function getPlatform() {
+    public function getAccount() {
         return $this->platform;
     }
 
@@ -55,42 +62,89 @@ class Alipay extends Platform {
         exit($dat);
     }
 
+    public function booking($message) {
+        $fan = array();
+        $fan['openid'] = $message['from'];
+        $fan['unionid'] = $message['from'];
+        $fan['subscribe'] = 1;
+        if($message['type'] == 'subscribe') {
+            $fan['subscribetime'] = $message['time'];
+        } elseif($message['type'] == 'unsubscribe') {
+            $fan['subscribe'] = 0;
+            $fan['unsubscribetime'] = $message['time'];
+        } else {
+            $fan['subscribetime'] = TIMESTAMP;
+        }
+        $tag = @json_decode($message['original']['userinfo'], true);
+        if(!empty($tag)) {
+            $fan['tag'] = serialize($tag);
+        }
+        parent::booking($fan);
+    }
+
     public function parse($message) {
-        $packet = array();
+        $msg = array();
         if (!empty($message)){
-            $xml = '<?xml version="1.0" encoding="GBK"?>' . $message;
-            $dom = new DOMDocument('1.0', 'GBK');
+            $xml = $message;
+            $dom = new \DOMDocument();
             if($dom->loadXML($xml)) {
-                $node = $dom->getElementsByTagName('FromUserId');
-                $packet['from'] = strval($node->item(0)->nodeValue);
-                $node = $dom->getElementsByTagName('AppId');
-                $packet['to'] = strval($node->item(0)->nodeValue);
-                $node = $dom->getElementsByTagName('AppId');
-                $packet['time'] = intval(substr(strval($node->item(0)->nodeValue), 0, 10));
-                $node = $dom->getElementsByTagName('MsgType');
-                $packet['type'] = strval($node->item(0)->nodeValue);
-                $node = $dom->getElementsByTagName('EventType');
-                $packet['event'] = strval($node->item(0)->nodeValue);
-
-                foreach ($dom as $variable => $property) {
-                    $packet[strtolower($variable)] = (string)$property;
+                $xpath = new \DOMXpath($dom);
+                $msg['from'] = $xpath->evaluate('string(//XML/FromUserId)');
+                $msg['to'] = $xpath->evaluate('string(//XML/AppId)');
+                $msg['time'] = $xpath->evaluate('string(//XML/CreateTime)');
+                $msg['type'] = 'unknow';
+                $elms = $xpath->query('//XML/*');
+                foreach($elms as $elm) {
+                    if($elm->childNodes->length == 1) {
+                        $msg['original'][strtolower($elm->nodeName)] = strval($elm->nodeValue);
+                    }
+                }
+                $type = $xpath->evaluate('string(//XML/MsgType)');
+                if($type == 'text') {
+                    $msg['type'] = Platform::MSG_TEXT;
+                    $msg['content'] = $xpath->evaluate('string(//XML/Text/Content)');
+                }
+                if($type == 'image') {
+                    $msg['type'] = Platform::MSG_IMAGE;
+                    $id = $xpath->evaluate('string(//XML/Image/MediaId)');
+                    $format = $xpath->evaluate('string(//XML/Image/Format)');
+                    $mediaData = $this->client->download($id);
+                    $fname = util_random(32) . '.' . $format;
+                    file_put_contents(MB_ROOT . 'attachment/media/alipay/' . $fname, $mediaData);
+                    $msg['url'] = '/attachment/media/alipay/' . $fname;
                 }
 
-                //处理其他事件类型
-                if($packet['type'] == 'event') {
-                    $packet['type'] = $packet['event'];
-                }
-                if($packet['type'] == 'follow') {
-                    //开始关注
-                    $packet['type'] = 'subscribe';
-                }
-                if($packet['type'] == 'unfollow') {
-                    //取消关注
-                    $packet['type'] = 'unsubscribe';
+                if($type == 'event') {
+                    //处理其他事件类型
+                    $event = $xpath->evaluate('string(//XML/EventType)');
+                    if($event == 'follow') {
+                        //开始关注
+                        $msg['type'] = Platform::MSG_SUBSCRIBE;
+                    }
+                    if($event == 'unfollow') {
+                        //取消关注
+                        $msg['type'] = Platform::MSG_UNSUBSCRIBE;
+                    }
+                    if($event == 'enter') {
+                        //进入对话
+                        $msg['type'] = Platform::MSG_ENTER;
+                        $scene = @json_decode($message['original']['actionparam'], true);
+                        if(!empty($scene)) {
+                            $msg['scene'] = $scene['sceneId'];
+                        }
+                    }
+                    if($event == 'click') {
+                        $msg['type'] = Platform::MSG_MENU_CLICK;
+                        $params = $message['original']['actionparam'];
+                        if(!empty($params)) {
+                            $msg['params'] = $params;
+                        }
+                    }
                 }
             }
         }
-        return $packet;
+        $this->message = $msg;
+        return $msg;
     }
 
     public function queryAvailablePackets($type = '') {
@@ -100,22 +154,53 @@ class Alipay extends Platform {
         );
     }
 
+    public function response($packet) {
+        $this->openPush($this->message['from'], $packet);
+        return '';
+    }
+
 
     public function isPushSupported() {
         return true;
     }
 
-    public function push($uid, $packet) {
+    private function openPush($openid, $packet) {
         import_third('aop.request.AlipayMobilePublicMessageCustomSendRequest');
         $request = new \AlipayMobilePublicMessageCustomSendRequest();
         $set = array();
-        $set['toUserId'] = 'L6OOPFU1auUKydq9vHxkKTvoMnZQkHvGW828bvjfD40ZcoV6valQ9EUNUhwK9mTS01';
-        $set['msgType'] = 'text';
+        $set['toUserId'] = $openid;
         $set['createTime'] = TIMESTAMP * 1000;
-        $set['text'] = array();
-        $set['text']['content'] = $packet['content'];
+        if($packet['type'] == Platform::POCKET_TEXT) {
+            $packet['content'] = str_replace('微信', 'WeChat', $packet['content']);
+            $set['msgType'] = 'text';
+            $set['text'] = array();
+            $set['text']['content'] = $packet['content'];
+        }
+        if($packet['type'] == Platform::POCKET_NEWS) {
+            $set['msgType'] = 'image-text';
+            $set['articles'] = array();
+            foreach($packet['news'] as $row) {
+                $set['articles'][] = array(
+                    "title" => $row['title'],
+                    "desc" => $row['description'],
+                    "imageUrl" => $row['picurl'],
+                    "actionName" => "查看详情",
+                    "url" => $row['url'],
+                    "authType" =>"loginAuth"
+                );
+            }
+        }
         $request->setBizContent(json_encode($set));
         $resp = $this->client->execute($request);
+        if($resp->alipay_mobile_public_message_custom_send_response->code != 200) {
+            Log::write($resp->alipay_mobile_public_message_custom_send_response->msg, Log::WARN);
+        }
         return $resp;
+    }
+    
+    public function push($uid, $packet) {
+        $openid = 'L6OOPFU1auUKydq9vHxkKTvoMnZQkHvGW828bvjfD40ZcoV6valQ9EUNUhwK9mTS01';
+        $resp = $this->openPush($openid, $packet);
+        return true;
     }
 }

@@ -38,8 +38,9 @@
 
 ## 安装方法
 数据目录没有创建, 部署之前请先创建以下数据及日志目录
-/source/Data/Logs
-/source/Data/Runtime/App
-/source/Data/Runtime/Web
+
+> * /source/Data/Logs
+> * /source/Data/Runtime/App
+> * /source/Data/Runtime/Web
 
 ## 初始数据
