@@ -32,7 +32,13 @@ class AccountController extends Controller {
                 }
                 $user = coll_elements(array('uid', 'username', 'role'), $user);
                 session('user', $user);
-                $this->success('成功登陆', U('bench/welcome/index'));
+                $forward = I('get.forward');
+                if(empty($forward)) {
+                    $forward = U('bench/welcome/index');
+                } else {
+                    $forward = U('/' . $forward);
+                }
+                $this->success('成功登陆', $forward);
             }
             exit;
         }

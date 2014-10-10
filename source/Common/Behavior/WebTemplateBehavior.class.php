@@ -4,10 +4,12 @@
  */
 namespace Common\Behavior;
 use Core\Model\Addon;
+use Core\Model\Site;
 use Think\Model;
 
 class WebTemplateBehavior {
     public function run(&$params) {
+        Site::loadSettings();
         if(MODULE_NAME == 'Bench') {
             $theme = I('cookie.template_theme');
             $themes = array(
@@ -60,9 +62,10 @@ class WebTemplateBehavior {
                 if(!empty($addons)) {
                     foreach($addons as $a) {
                         $addon = new Addon($a);
-                        $entries = $addon->getEntries(strtolower(MODULE_NAME));
+                        $entryType = strtolower(MODULE_NAME);
+                        $entries = $addon->getEntries($entryType);
                         if(!empty($entries)) {
-                            $items[] = array('icon' => 'plus', 'title' => $a['title'], 'url' => U('/bench/extend/' . $a['name']));
+                            $items[] = array('icon' => 'plus', 'title' => $a['title'], 'url' => U("/{$entryType}/extend/{$a['name']}"));
                         }
                     }
                 }
@@ -105,11 +108,17 @@ class WebTemplateBehavior {
             foreach($row['items'] as &$item) {
                 if($item['url'] == $url) {
                     $item['current'] = true;
+                    if(!C('FRAME_TITLE')) {
+                        C('FRAME_TITLE', $item['title']);
+                    }
                 }
                 if(!empty($item['items'])) {
                     foreach($item['items'] as &$sub) {
                         if($sub['url'] == $url) {
                             $sub['current'] = true;
+                            if(!C('FRAME_TITLE')) {
+                                C('FRAME_TITLE', $sub['title']);
+                            }
                         }
                     }
                 }
@@ -152,22 +161,17 @@ class WebTemplateBehavior {
                     array(
                         'icon'  => 'level-up',
                         'title' => '升级系统',
-                        'url'   => U('control/cache/flush')
+                        'url'   => U('control/site/update')
                     ),
                     array(
                         'icon'  => 'refresh',
                         'title' => '更新缓存',
-                        'url'   => U('control/cache/flush')
+                        'url'   => U('control/site/flush')
                     ),
                     array(
                         'icon'  => 'database',
                         'title' => '数据库',
                         'url'   => U('control/database/backup')
-                    ),
-                    array(
-                        'icon'  => 'wrench',
-                        'title' => '系统工具',
-                        'url'   => U('control/tools/bom')
                     )
                 )
             ),
@@ -296,6 +300,11 @@ class WebTemplateBehavior {
                         'icon'  => 'plug',
                         'title' => '已安装的扩展',
                         'url'   => U('control/extend/list')
+                    ),
+                    array(
+                        'icon'  => 'plus',
+                        'title' => '安装本地扩展',
+                        'url'   => U('control/extend/install')
                     ),
                 )
             ),
@@ -478,18 +487,7 @@ class WebTemplateBehavior {
                 )
             )
         );
-        $frames['extend'] = array(
-            array(
-                'title' => '管理扩展',
-                'items' => array(
-                    array(
-                        'icon'  => 'plug',
-                        'title' => '已安装的扩展',
-                        'url'   => U('bench/extend/list')
-                    ),
-                )
-            ),
-        );
+        $frames['extend'] = array();
         $frames['analyze'] = array(
             array(
                 'title' => '会员',

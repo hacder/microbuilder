@@ -19,8 +19,8 @@ class EmptyController extends Controller {
 
     public function _empty(){
         //file_put_contents('D:\\1.log', serialize($_POST));
-        $dat = file_get_contents('D:\\1.log');
-        $_POST = unserialize($dat);
+        //$dat = file_get_contents('D:\\1.log');
+        //$_POST = unserialize($dat);
         $name = strtolower(CONTROLLER_NAME);
         if($name == 'uc') {
             //接入uc

@@ -43,8 +43,8 @@
                     <div class="alert alert-warning">
                         <p><strong>不要频繁切换运行模式, 尤其是已经存在用户数据的系统 </strong></p>
                         <p>
-                            从兼容模式切换至统一模式时, 需要进行用户数据合并, 而有的第三方模块可能没有正确处理用户合并逻辑, 这种情况下可能会造成数据丢失. <br />
-                            切换运行模式时, 请联系您的第三方扩展开发者, 确认模块正确支持用户合并逻辑
+                            从兼容模式切换至统一模式时, 需要进行用户数据合并, 而有的第三方扩展可能没有正确处理用户合并逻辑, 这种情况下可能会造成数据丢失. <br />
+                            切换运行模式时, 请联系您的第三方扩展开发者, 确认扩展正确支持用户合并逻辑
                         </p>
                     </div>
 
@@ -58,8 +58,9 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <form action="" method="post"></form>
-                                <button type="submit" class="btn btn-block btn-default">切换为兼容模式</button>
+                                <form action="" method="post">
+                                    <button type="submit" class="btn btn-block btn-default">切换为兼容模式</button>
+                                </form>
                             </div>
                         </div>
                         <else/>
@@ -72,8 +73,9 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <form action="" method="post"></form>
-                                <button type="submit" class="btn btn-block btn-default" onclick="return confirm('从兼容模式切换为统一模式时, 会产生会员资料合并. 第三方扩展如果未正确处理业务逻辑, 可能会产生数据丢失. \r\n\r\n是否要继续? ');">切换为统一模式</button>
+                                <form action="" method="post">
+                                    <button type="submit" class="btn btn-block btn-default" onclick="return confirm('从兼容模式切换为统一模式时, 会产生会员资料合并. 第三方扩展如果未正确处理业务逻辑, 可能会产生数据丢失. \r\n\r\n是否要继续? ');">切换为统一模式</button>
+                                </form>
                             </div>
                         </div>
                     </if>

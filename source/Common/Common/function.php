@@ -3,16 +3,25 @@
 /**
  * @param string $url
  * @param string $vars
- * @param bool $suffix
- * @param bool $domain
+ * @return string
  */
 function AU($url='', $vars='') {
     $entry = strtolower(MODULE_NAME);
     $addon = strtolower(ADDON_NAME);
-    $url = "/{$entry}/{$addon}/{$url}";
+    if(empty($entry) || empty($addon)) {
+        trigger_error('当前上下文不支持这个函数AU', E_USER_ERROR);
+    }
+    $url = "/{$entry}/extend/{$addon}/{$url}";
     return U($url, $vars);
 }
-    
+
+function attach($path) {
+    if(stripos('http://', $path) === 0 || stripos('https://', $path) === 0) {
+        return $path;
+    } else {
+        return C('COMMON.SITEPATH') . $path;
+    }
+}
 
 function coll_key($ds, $key) {
     if(!empty($ds) && !empty($key)) {

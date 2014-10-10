@@ -16,17 +16,19 @@
                 <li{:C('FRAME_ACTIVE') == 'member' ? ' class="active"' : ''}><a href="{:U('control/welcome/member')}"><i class="fa fa-fw fa-users"></i> 会员及粉丝</a></li>
                 <li{:C('FRAME_ACTIVE') == 'access' ? ' class="active"' : ''}><a href="{:U('control/welcome/access')}"><i class="fa fa-fw fa-sitemap"></i> 用户分权</a></li>
                 <li{:C('FRAME_ACTIVE') == 'extend' ? ' class="active"' : ''}><a href="{:U('control/welcome/extend')}"><i class="fa fa-fw fa-plug"></i> 扩展功能</a></li>
+                <!--
                 <li{:C('FRAME_ACTIVE') == 'store'  ? ' class="active"' : ''}><a href="{:U('control/welcome/store')}"><i class="fa fa-fw fa-shopping-cart"></i> 应用商店</a></li>
+                -->
             </ul>
             <ul class="collapse navbar-collapse nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <?php $__user = C('SESSION.USER');$__role = C('SESSION.ROLE');?>
                     <a href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> {$__user['USERNAME']}<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#"><i class="fa fa-fw fa-user"></i> 个人资料</a></li>
+                        <li><a href="{:U('/bench/account/profile')}" target="_blank"><i class="fa fa-fw fa-user"></i> 个人资料</a></li>
                         <li><a href="{:U('/bench')}"><i class="fa fa-fw fa-reply"></i> 返回运营工作台</a></li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-fw fa-sign-out"></i> 退出系统</a></li>
+                        <li><a href="{:U('/wander/account/logout')}"><i class="fa fa-fw fa-sign-out"></i> 退出系统</a></li>
                     </ul>
                 </li>
             </ul>

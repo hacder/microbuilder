@@ -23,15 +23,6 @@
                         u.message('必须上传服务窗二维码');
                         return false;
                     }
-                    <else/>
-                    if($.trim($('*[name="private_key"]').val()) == '') {
-                        u.message('必须保存商户私钥');
-                        return false;
-                    }
-                    if($.trim($('*[name="public_key"]').val()) == '') {
-                        u.message('必须保存商户公钥');
-                        return false;
-                    }
                 </if>
             });
         });
@@ -63,7 +54,7 @@
                     <label class="col-sm-2 control-label">服务窗二维码</label>
                     <div class="col-sm-5">
                         <if condition="!empty($entity['qr'])">
-                            <input type="file" name="qr" value="" accept="image/*" data-preview="{$entity['qr']}" data-caption="当前服务窗二维码">
+                            <input type="file" name="qr" value="" accept="image/*" data-preview="{:attach($entity['qr'])}" data-caption="当前服务窗二维码">
                             <else/>
                             <input type="file" name="qr" value="" accept="image/*">
                         </if>
@@ -101,8 +92,7 @@
                                     return key;
                                 };
                                 u.clip($('#copy-key')[0], function(){
-                                    var key = $('*[name="public_key"]').val();
-                                    return trimKey(key);
+                                    return $('#view-public-key').val();
                                 }, function() {
                                     u.message('成功复制商家公钥, 请访问支付宝平台进行接入 <br /><if condition="!$isGen"><strong>注意: 接入之前请保存密钥对.</strong></if>');
                                 });
@@ -114,12 +104,14 @@
                                             u.message(json.message);
                                             return;
                                         }
-                                        $('input:hidden[name="public_key"]').val(json.public);
-                                        $('input:hidden[name="private_key"]').val(json.private);
-                                        $('#view-public-key').val(trimKey($('*[name="public_key"]').val()));
+                                        $('#view-public-key').val(trimKey(json.public));
                                     });
                                 });
-                                $('#view-public-key').val(trimKey($('*[name="public_key"]').val()));
+                                $('#view-public-key').val(trimKey($('#public_key').val()));
+                                if($('#public_key').val() == '') {
+                                    $('#gen-key').trigger('click');
+                                }
+                                $('#copy-url abbr').html(location.protocol + '//' + location.host + $('#copy-url abbr').text());
                             });
                         });
                     </script>
@@ -127,80 +119,31 @@
                         <label class="col-sm-2 control-label">接入URL</label>
                         <div class="col-sm-4">
                             <p class="form-control-static">
-                                <a href="javascript:;" id="copy-url"><abbr title="点击复制"><?php echo __HOST__;?>{:U('/api/' . $entity['id'])}</abbr></a>
+                                <a href="javascript:;" id="copy-url"><abbr title="点击复制">{:U('/api/' . $entity['id'])}</abbr></a>
                             </p>
                             <div class="help-block">
                                 点击链接复制
                             </div>
                         </div>
                     </div>
-                    <if condition="$isGen">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">商户公钥</label>
-                            <div class="col-sm-6">
-                                <input name="public_key" type="hidden" value="{$entity['public_key']}" />
-                                <input name="private_key" type="hidden" value="{$entity['private_key']}" />
-                                <textarea id="view-public-key" class="form-control" rows="4" readonly></textarea>
-                                <div class="help-block">
-                                    您的系统支持在线生成密钥对, 您可以直接复制密钥字符串, 保存至支付宝接口进行接入
-                                </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">商户公钥</label>
+                        <div class="col-sm-6">
+                            <input id="public_key" type="hidden" value="{$entity['public_key']}" />
+                            <textarea id="view-public-key" class="form-control" rows="4" readonly></textarea>
+                            <div class="help-block">
+                                您的系统支持在线生成密钥对, 您可以直接复制密钥字符串, 保存至支付宝接口进行接入
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-2">
-                                <button id="gen-key" type="button" class="btn btn-block btn-default">重新生成公钥</button>
-                            </div>
-                            <div class="col-sm-2">
-                                <button id="copy-key" type="button" class="btn btn-block btn-default">复制公钥字符串用于接入</button>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-2">
+                            <button id="gen-key" type="button" class="btn btn-block btn-default">重新生成公钥</button>
                         </div>
-                        <else/>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div class="alert alert-info">
-                                    <h4>您的系统不支持在线生成密钥对</h4>
-                                    <ul>
-                                        <li> 您可以使用微构官方提供的在线生成工具 <a class="alert-link" href="http://www.microb.cn/"><abbr title="微构系统官方工具">点击这里访问在线生成密钥对的工具</abbr></a> </li>
-                                        <li> 如果您对在线工具有顾虑, 也可以自行使用 OpenSSL 工具生成密钥对 <a class="alert-link" href="https://fuwu.alipay.com/platform/doc.htm#c0201"><abbr title="支付宝官方文档">点击查看帮助</abbr></a> </li>
-                                        <li> 将生成的密钥信息复制到下边的输入框内点击保存 </li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="col-sm-2">
+                            <button id="copy-key" type="button" class="btn btn-block btn-default">复制公钥字符串用于接入</button>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">商户公钥</label>
-                            <div class="col-sm-6">
-                                <textarea name="public_key" class="form-control"{$isGen ? ' readonly' : ''} rows="4">{$entity['public_key']}</textarea>
-                                <div class="help-block">
-                                    格式说明: <br/>
-                                    以 -----BEGIN PUBLIC KEY-----  <br />
-                                    以 -----END PUBLIC KEY----- 结束
-                                </div>
-                                <div class="help-block">
-                                    <strong class="text-danger">不要</strong>复制这里的内容, 保存至支付宝接口中, 请点击下方的<strong class="text-danger">复制按钮</strong>来复制内容
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">商户私钥</label>
-                            <div class="col-sm-6">
-                                <textarea name="private_key" class="form-control" rows="8">{$entity['private_key']}</textarea>
-                                <div class="help-block">
-                                    格式说明: <br/>
-                                    以 -----BEGIN PRIVATE KEY-----  <br />
-                                    以 -----END PRIVATE KEY----- 结束
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-1">
-                                <button type="submit" class="btn btn-block btn-primary">保存</button>
-                            </div>
-                            <div class="col-sm-3">
-                                <button id="copy-key" type="button" class="btn btn-block btn-default">复制公钥字符串用于接入</button>
-                            </div>
-                        </div>
-                    </if>
+                    </div>
                 </div>
             </div>
         </div>

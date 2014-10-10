@@ -28,4 +28,3 @@ define('MSG_TYPE_INFO', 2);
 define('MSG_TYPE_WARNING', 3);
 define('MSG_TYPE_DANGER', 4);
 define('TIMESTAMP', time());
-define('__HOST__', 'http://www.microb.cn');

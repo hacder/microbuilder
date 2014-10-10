@@ -18,6 +18,13 @@ class AddonController extends Controller {
         $this->params = $params;
         $this->addon = $addon;
         $this->assign('__addon', $this->addon->getCurrentAddon());
+        $this->assign('__controller', $this);
+        $this->assign('C', $this);
+    }
+    
+    public function U($url='', $vars='') {
+        $entry = strtolower(MODULE_NAME);
+        return $this->addon->U($entry, $url, $vars);
     }
 
     protected function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {

@@ -3,7 +3,7 @@
     <div class="col-sm-9">
         <div class="well">
             <h4>
-                欢迎使用微构
+                欢迎使用{__GLOBAL_APPLICATION__}
             </h4>
         </div>
     </div>
@@ -12,6 +12,11 @@
             <div class="alert alert-info">
                 请输入用户名密码登陆
             </div>
+            <if condition="I('get.forward') != ''">
+                <div class="alert alert-warning">
+                    您访问的页面需要登陆
+                </div>
+            </if>
             <form action="" method="post">
                 <fieldset>
                     <div class="form-group">

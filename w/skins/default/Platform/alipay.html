@@ -21,7 +21,7 @@
                             <th style="min-width:60px;"></th>
                             <th style="width:160px;"></th>
                         </tr>
-                        <foreach name="platforms" item="row">
+                        <foreach name="accounts" item="row">
                             <tr>
                                 <td>
                                     {$row['title']}
@@ -40,7 +40,7 @@
                                     </if>
                                 </td>
                                 <td>
-                                    <div class="btn-group">
+                                    <div class="btn-group btn-group-sm">
                                         <a class="btn btn-default" href="{:U('control/platform/alipay?do=modify&id=' . $row['id'])}">编辑/接入</a>
                                         <a class="btn btn-default" href="{:U('control/platform/alipay?do=delete&id=' . $row['id'])}">删除</a>
                                     </div>

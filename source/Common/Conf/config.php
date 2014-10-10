@@ -1,5 +1,5 @@
 <?php
-$config = require MB_ROOT . 'source/config.inc.php';
+$config = require MB_ROOT . 'source/Conf/config.inc.php';
 $db = $config['db'];
 
 $cfg = array(
@@ -8,6 +8,7 @@ $cfg = array(
     'SHOW_PAGE_TRACE'       =>  true,
     'ACTION_SUFFIX'         =>  'Action',
     'SESSION_AUTO_START'    =>  false,
+    'VAR_ADDON'             =>  '____',
 
     'DEFAULT_MODULE'        =>  'Home',
     'DEFAULT_CONTROLLER'    =>  'Home',

@@ -12,13 +12,17 @@
 
             <ul class="collapse navbar-collapse nav navbar-nav">
                 <li{:C('FRAME_ACTIVE') == 'summary' ? ' class="active"' : ''}><a href="{:U('bench/welcome/summary')}"><i class="fa fa-fw fa-bar-chart"></i> 运营概况</a></li>
+                <!--
                 <li{:C('FRAME_ACTIVE') == 'cms' ? ' class="active"' : ''}><a href="{:U('bench/welcome/cms')}"><i class="fa fa-fw fa-terminal"></i> 内容管理</a></li>
                 <li{:C('FRAME_ACTIVE') == 'uc' ? ' class="active"' : ''}><a href="{:U('bench/welcome/uc')}"><i class="fa fa-fw fa-user"></i> 会员及营销</a></li>
+                -->
                 <li{:C('FRAME_ACTIVE') == 'extend' ? ' class="active"' : ''}><a href="{:U('bench/welcome/extend')}"><i class="fa fa-fw fa-plus"></i> 更多功能</a></li>
                 <if condition="defined('ADDON_NAME')">
                     <li class="active"><a href="{:U('bench/welcome/extend')}"><i class="fa fa-fw fa-plus-circle"></i> {$__addon['title']}</a></li>
                 </if>
+                <!--
                 <li{:C('FRAME_ACTIVE') == 'analyze' ? ' class="active"' : ''}><a href="{:U('bench/welcome/analyze')}"><i class="fa fa-fw fa-line-chart"></i> 数据分析</a></li>
+                -->
                 <li class="dropdown">
                     <a href="javascript:;" data-toggle="dropdown"><i class="fa fa-fw fa-external-link"></i> 前往公众平台 <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -51,12 +55,12 @@
                     <?php $__user = C('SESSION.USER');$__role = C('SESSION.ROLE');?>
                     <a href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> {$__user['USERNAME']}<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#"><i class="fa fa-fw fa-user"></i> 个人资料</a></li>
+                        <li><a href="{:U('/bench/account/profile')}"><i class="fa fa-fw fa-user"></i> 个人资料</a></li>
                         <if condition="$__role['ID'] == '-1'">
                             <li><a href="{:U('/control')}"><i class="fa fa-fw fa-cog fa-spin"></i> 进入管理中心</a></li>
                         </if>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-fw fa-sign-out"></i> 退出系统</a></li>
+                        <li><a href="{:U('/wander/account/logout')}"><i class="fa fa-fw fa-sign-out"></i> 退出系统</a></li>
                     </ul>
                 </li>
             </ul>

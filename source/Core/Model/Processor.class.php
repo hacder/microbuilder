@@ -97,8 +97,13 @@ class Processor extends Model {
     
     private function execPacket($addon, $message, $processor) {
         $class = "Addon\\{$addon}\\Api\\Executor";
-        $instance = new $class();
-        $packet = $instance->exec($message, $processor);
-        return $packet;
+        if(class_exists($class)) {
+            $instance = new $class();
+            if(method_exists($instance, 'exec')) {
+                $packet = $instance->exec($message, $processor);
+                return $packet;
+            }
+        }
+        return null;
     }
 }

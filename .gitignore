@@ -1,3 +1,5 @@
 /\.idea
-/source/data/
+/source/Data/
+/source/Conf/config.inc.php
+/source/Conf/install.lock
 /attachment/

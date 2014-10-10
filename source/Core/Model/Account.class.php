@@ -86,7 +86,7 @@ class Account extends Model {
             if(empty($ret)) {
                 return error(-4, $uploader->getError());
             }
-            $rec['qr'] = '/attachment/qr/' . $ret['savename'];
+            $rec['qr'] = 'attachment/qr/' . $ret['savename'];
         }
 
         $ret = $this->table('__PLATFORMS__')->data($rec)->where("`id`='{$id}'")->save();
@@ -95,12 +95,20 @@ class Account extends Model {
         }
 
         if($type == self::ACCOUNT_ALIPAY) {
-            $record = array();
-            $record['public_key'] = I('post.public_key');
-            $record['private_key'] = I('post.private_key');
-            $this->table('__PLATFORM_ALIPAY__')->data($record)->where("`id`='{$id}'")->save();
         }
         return true;
+    }
+    
+    public function remove($id) {
+        $account = $this->getPlatform($id);
+        if(!empty($account)) {
+            if($account['type'] == self::ACCOUNT_ALIPAY) {
+                $this->table('__PLATFORM_ALIPAY__')->where("`id`='{$id}'")->delete();
+            }
+            $this->table('__PLATFORMS__')->where("`id`='{$id}'")->delete();
+            return true;
+        }
+        return false;
     }
 
     public function getPlatform($id, $type = '') {
@@ -109,13 +117,15 @@ class Account extends Model {
         $pars[':id'] = $id;
         if(!empty($type)) {
             $condition .= ' AND `type`=:type';
-            $pars[':type'] = Account::ACCOUNT_ALIPAY;
+            $pars[':type'] = $type;
         }
-        $platform = $this->table('__PLATFORMS__')->where($condition)->bind($pars)->find();
-        if(!empty($platform)) {
-            $alipay = $this->table('__PLATFORM_ALIPAY__')->where('`id`=:id')->bind(array(':id'=>$id))->find();
-            $platform = array_merge($platform, $alipay);
+        $account = $this->table('__PLATFORMS__')->where($condition)->bind($pars)->find();
+        if(!empty($account)) {
+            if($account['type'] == self::ACCOUNT_ALIPAY) {
+                $alipay = $this->table('__PLATFORM_ALIPAY__')->where('`id`=:id')->bind(array(':id'=>$id))->find();
+                $account = array_merge($account, $alipay);
+            }
         }
-        return $platform;
+        return $account;
     }
 }

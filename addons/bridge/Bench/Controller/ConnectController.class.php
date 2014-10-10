@@ -5,7 +5,7 @@ use Core\AddonController;
 
 class ConnectController extends AddonController {
     public function weixinAction() {
-        C('FRAME_CURRENT', AU('connect/weixin'));
+        C('FRAME_CURRENT', $this->U('connect/weixin'));
         util_curd($this, 'weixin');
     }
     
@@ -27,7 +27,7 @@ class ConnectController extends AddonController {
             $b = new Bridge($this->addon);
             $rec = $b->create($rec);
             if(!empty($rec)) {
-                $this->success('保存接入平台成功', AU('connect/weixin'));
+                $this->success('保存接入平台成功', $this->U('connect/weixin'));
                 exit;
             } else {
                 $this->error('保存失败, 可能是因为这个平台已经接入过, 请检查 URL');
@@ -53,7 +53,7 @@ class ConnectController extends AddonController {
             }
             $rec = $b->table('__BR_BRIDGES__')->data($rec)->where("`id`='{$id}'")->save();
             if(!empty($rec)) {
-                $this->success('保存接入平台成功', AU('connect/weixin'));
+                $this->success('保存接入平台成功', $this->U('connect/weixin'));
                 exit;
             } else {
                 $this->error('保存失败, 可能是因为这个平台已经接入过, 请检查 URL');
@@ -70,6 +70,6 @@ class ConnectController extends AddonController {
         }
         $b = new Bridge($this->addon);
         $b->remove($id);
-        $this->success('删除接入平台成功', AU('connect/weixin'));
+        $this->success('删除接入平台成功', $this->U('connect/weixin'));
     }
 }

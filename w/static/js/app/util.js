@@ -75,7 +75,7 @@ define(['bootstrap'], function($){
         }
         require(['jquery.zclip'], function() {
             $(elm).zclip({
-                path: '/w/static/components/zclip/ZeroClipboard.swf',
+                path: window.__public__ + 'components/zclip/ZeroClipboard.swf',
                 copy: str,
                 afterCopy: function() {
                     if($.isFunction(callback)) {

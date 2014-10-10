@@ -175,27 +175,38 @@ class Alipay extends Platform {
             $set['msgType'] = 'text';
             $set['text'] = array();
             $set['text']['content'] = $packet['content'];
+            
+            $request->setBizContent(json_encode($set));
+            $resp = $this->client->execute($request);
+            if($resp->alipay_mobile_public_message_custom_send_response->code != 200) {
+                Log::write($resp->alipay_mobile_public_message_custom_send_response->msg, Log::WARN);
+            }
         }
         if($packet['type'] == Platform::POCKET_NEWS) {
             $set['msgType'] = 'image-text';
-            $set['articles'] = array();
-            foreach($packet['news'] as $row) {
-                $set['articles'][] = array(
-                    "title" => $row['title'],
-                    "desc" => $row['description'],
-                    "imageUrl" => $row['picurl'],
-                    "actionName" => "查看详情",
-                    "url" => $row['url'],
-                    "authType" =>"loginAuth"
-                );
+            $total = count($packet['news']);
+            $times = ceil($total / 4);
+            for($i = 0; $i < $times; $i++) {
+                $news = array_slice($packet['news'], $i * 4, 4);
+                $set['articles'] = array();
+                foreach($news as $row) {
+                    $set['articles'][] = array(
+                        "title" => $row['title'],
+                        "desc" => $row['description'],
+                        "imageUrl" => $row['picurl'],
+                        "actionName" => "查看详情",
+                        "url" => $row['url'],
+                        "authType" =>"loginAuth"
+                    );
+                }
+
+                $request->setBizContent(json_encode($set));
+                $resp = $this->client->execute($request);
+                if($resp->alipay_mobile_public_message_custom_send_response->code != 200) {
+                    Log::write($resp->alipay_mobile_public_message_custom_send_response->msg, Log::WARN);
+                }
             }
         }
-        $request->setBizContent(json_encode($set));
-        $resp = $this->client->execute($request);
-        if($resp->alipay_mobile_public_message_custom_send_response->code != 200) {
-            Log::write($resp->alipay_mobile_public_message_custom_send_response->msg, Log::WARN);
-        }
-        return $resp;
     }
     
     public function push($uid, $packet) {

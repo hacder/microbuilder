@@ -10,5 +10,6 @@ $config['db']['default']['charset']     = 'utf8';
 $config['db']['default']['tablepre']    = 'mb_';
 
 $config['common']['authkey']            = 'microbuilder';
+$config['common']['sitepath']           = '/trunk/';
 
 return $config;

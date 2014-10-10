@@ -9,39 +9,6 @@
     <div class="box col-md-12">
         <div class="box-inner">
             <div class="box-header well" data-original-title="">
-                <h2><i class="fa fa-search"></i> 查询</h2>
-            </div>
-            <div class="box-content">
-                <form action="?" id="search" class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">所属用户组</label>
-                        <div class="col-sm-3">
-                            <select class="form-control" name="seller">
-                                <option value="">请选择用户组</option>
-                                <foreach name="roles" item="role">
-                                    <option value="{$role['id']}"<if condition="$role['id'] == I('get.role')"> selected="selected"</if> >{$role['title']}</option>
-                                </foreach>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">用户名</label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="text" name="username" value="{:I('get.username')}" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-1">
-                            <button type="submit" class="btn btn-block btn-default">查询(@todo: 查询及分页未实现)</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="box col-md-12">
-        <div class="box-inner">
-            <div class="box-header well" data-original-title="">
                 <h2><i class="fa fa-list"></i> 用户列表</h2>
             </div>
             <div class="box-content">
@@ -76,7 +43,7 @@
                                     <td>
                                         <if condition="$user['uid'] == '1'">
                                         <else/>
-                                            <div class="btn-group">
+                                            <div class="btn-group btn-group-sm">
                                                 <a class="btn btn-default" href="{:U('control/user/modify?uid=' . $user['uid'])}">编辑</a>
                                                 <a class="btn btn-default" href="{:U('control/user/delete?uid=' . $user['uid'])}">删除</a>
                                             </div>
