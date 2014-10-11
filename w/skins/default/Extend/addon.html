@@ -1,4 +1,8 @@
-<include file="Common/header-bench" />
+<if condition="MODULE_NAME=='Control'">
+    <include file="Common/header-control" />
+    <else/>
+    <include file="Common/header-bench" />
+</if>
 <div class="row">
     <div class="col-md-12">
         <ul class="nav nav-tabs">
@@ -26,4 +30,8 @@
         </div>
     </div>
 </div>
-<include file="Common/footer-bench" />
+<if condition="MODULE_NAME=='Control'">
+    <include file="Common/footer-control" />
+    <else/>
+    <include file="Common/footer-bench" />
+</if>

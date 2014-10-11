@@ -1,11 +1,16 @@
 <?php
-$config = require MB_ROOT . 'source/Conf/config.inc.php';
+$cfgFile = MB_ROOT . 'source/Conf/config.inc.php';
+if(!is_file($cfgFile)) {
+    header('location: ../install.php');
+    exit;
+}
+$config = require $cfgFile;
 $db = $config['db'];
 
 $cfg = array(
     'VIEW_PATH'             =>  APP_ROOT . 'skins/',
     'CHECK_APP_DIR'         =>  false,
-    'SHOW_PAGE_TRACE'       =>  true,
+    'SHOW_PAGE_TRACE'       =>  defined('APP_DEBUG') && APP_DEBUG,
     'ACTION_SUFFIX'         =>  'Action',
     'SESSION_AUTO_START'    =>  false,
     'VAR_ADDON'             =>  '____',

@@ -6,6 +6,31 @@ use Think\Model;
 class Addon extends Model {
     protected $autoCheckFields = false;
     
+    public static function run($params) {
+        C('FRAME_ACTIVE', 'addons');
+        $a = new Addon($params['Addon']);
+        $struct = $a->getCurrentAddon();
+        $params['Addon'] = $struct['name'];
+        $params['Entry'] = parse_name($params['Entry'], 1);
+        $params['Controller'] = parse_name($params['Controller'], 1);
+        $params['Action'] = parse_name($params['Action'], 1);
+        define('ADDON_NAME', $params['Addon']);
+        define('ADDON_CURRENT_PATH', MB_ROOT . "addons/{$params['Addon']}/");
+        C('ADDON_INSTANCE', $a);
+        Addon::autoload();
+        $class = "Addon\\{$params['Addon']}\\{$params['Entry']}\\Controller\\{$params['Controller']}Controller";
+        if(class_exists($class)) {
+            $instance = new $class($params, $a);
+            $method = $params['Action'] . C('ACTION_SUFFIX');
+            if(method_exists($instance, $method)) {
+                call_user_func(array($instance, $method));
+            } else {
+                return error(-2, "访问的操作 {$params['Entry']}\\{$params['Controller']}\\{$params['Action']} 不存在.");
+            }
+        } else {
+            return error(-1, "访问的控制器 {$params['Entry']}\\{$params['Controller']} 不存在.");
+        }
+    }
     public static function autoload() {
         spl_autoload_register(function($class){
             $pieces = explode('\\', $class, 2);

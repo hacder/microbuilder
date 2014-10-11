@@ -39,6 +39,8 @@ class AccountController extends Controller {
                     $forward = U('/' . $forward);
                 }
                 $this->success('成功登陆', $forward);
+            } else {
+                $this->error('您输入的用户名或密码错误');
             }
             exit;
         }

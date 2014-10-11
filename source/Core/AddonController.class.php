@@ -36,16 +36,16 @@ class AddonController extends Controller {
         if(count($pieces) <= 3) {
             if(count($pieces) == 1) {
                 $controller = ucfirst($this->params['Controller']);
-                $templateFile = MB_ROOT . "addons/Bridge/Bench/View/{$controller}/{$pieces[0]}.html";
+                $templateFile = MB_ROOT . "addons/{$this->params['Addon']}/{$this->params['Entry']}/View/{$controller}/{$pieces[0]}.html";
             }
             if(count($pieces) == 2) {
                 $controller = ucfirst($pieces[0]);
-                $templateFile = MB_ROOT . "addons/Bridge/Bench/View/{$controller}/{$pieces[1]}.html";
+                $templateFile = MB_ROOT . "addons/{$this->params['Addon']}/{$this->params['Entry']}/View/{$controller}/{$pieces[1]}.html";
             }
             if(count($pieces) == 3) {
                 $entry = ucfirst($pieces[0]);
                 $controller = ucfirst($pieces[1]);
-                $templateFile = MB_ROOT . "addons/Bridge/{$entry}/View/{$controller}/{$pieces[2]}.html";
+                $templateFile = MB_ROOT . "addons/{$this->params['Addon']}/{$entry}/View/{$controller}/{$pieces[2]}.html";
             }
             if(!is_file($templateFile)) {
                 $templateFile = $tmp;

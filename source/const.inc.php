@@ -23,6 +23,8 @@ if(defined('IN_APP') && IN_APP === true) {
     define('RUNTIME_PATH', MB_ROOT . 'source/Data/Runtime/Web/');
 }
 
+require MB_ROOT . 'source/Conf/version.inc.php';
+
 define('MSG_TYPE_SUCCESS', 1);
 define('MSG_TYPE_INFO', 2);
 define('MSG_TYPE_WARNING', 3);
