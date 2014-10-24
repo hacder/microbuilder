@@ -1,12 +1,14 @@
 <?php
 $c = array();
 
+$c['SESSION_AUTO_START']      =  false;
 $c['DEFAULT_MODULE']          = 'Wander';
 $c['DEFAULT_CONTROLLER']      = 'Aurora';
 $c['TMPL_ACTION_ERROR']       = 'Common/message';
 $c['TMPL_ACTION_SUCCESS']     = 'Common/message';
 $c['TMPL_PARSE_STRING']       = array(
-    '__PUBLIC__'              => $config['common']['sitepath'] . 'w/static/',
+    '__SITE__'                => __SITE__,
+    '__PUBLIC__'              => __SITE__ . 'w/static/',
     '{__TEMPLATE_THEME__}'    => '',
     '{__GLOBAL_APPLICATION__}'=> '微构',
     '{__GLOBAL_VERSION__}'    => MB_VERSION,

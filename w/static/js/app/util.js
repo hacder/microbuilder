@@ -1,13 +1,13 @@
 define(['bootstrap'], function($){
     var module = {};
 
-    module.preview = function() {
+    module.preview = function(title) {
         require(['fileinput'], function($){
             $('input[type="file"]').each(function(){
                 var cfg = {
                     showUpload: false,
                     allowedPreviewTypes: ['image'],
-                    browseLabel: '选择图片',
+                    browseLabel: title ? title : '选择图片',
                     removeLabel: '清空',
                     layoutTemplates: {
                         main1: '<div class="input-group {class}">\n' +
@@ -61,7 +61,7 @@ define(['bootstrap'], function($){
         return true;
     };
 
-    module.tomedia = function(src){
+    module.attach = function(src){
         if(src.indexOf('http://') == 0 || src.indexOf('https://') == 0) {
             return src;
         } else {

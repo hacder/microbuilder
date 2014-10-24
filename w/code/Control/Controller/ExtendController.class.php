@@ -8,7 +8,7 @@ use Think\Controller;
 use Think\Model;
 
 class ExtendController extends Controller {
-    public function _empty($name) {
+    public function _empty() {
         $pieces = explode('/', __INFO__, 6);
         if(count($pieces) >= 5 && $pieces[0] == 'control' && $pieces[1] == 'extend') {
             $params = array();
@@ -18,17 +18,17 @@ class ExtendController extends Controller {
             if(is_error($ret)) {
                 $this->error($ret['message']);
             }
-            exit;
+            return;
         }
 
-        $name = preg_replace('/' . C('ACTION_SUFFIX') . '$/', '', $name);
+        $name = parse_name(ACTION_NAME, 1);
         $a = new Addon($name);
         $entries = $a->getEntries(Addon::ENTRY_CONTROL);
 
         $this->assign('entity', $a->getCurrentAddon());
         $this->assign('entries', $entries);
         C('FRAME_ACTIVE', 'extend');
-        C('FRAME_CURRENT', U('control/extend/' . $name));
+        C('FRAME_CURRENT', U('control/extend/' . ACTION_NAME));
         $this->display('Extend/addon');
     }
 

@@ -8,7 +8,7 @@ use Think\Controller;
 use Think\Storage;
 
 class DatabaseController extends Controller {
-    public function _empty($name) {
+    public function _empty() {
         $this->display('backup');
     }
 }

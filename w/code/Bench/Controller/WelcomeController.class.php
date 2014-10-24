@@ -5,9 +5,8 @@
 namespace Bench\Controller;
 use Think\Controller;
 class WelcomeController extends Controller {
-    public function _empty($name) {
-        $name = preg_replace('/' . C('ACTION_SUFFIX') . '$/', '', $name);
-        C('FRAME_ACTIVE', $name);
+    public function _empty() {
+        C('FRAME_ACTIVE', ACTION_NAME);
         $this->display('Welcome/bench');
     }
 

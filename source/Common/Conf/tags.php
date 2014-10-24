@@ -3,14 +3,13 @@
  * 行为嵌入点定义
  */
 $tags = array();
+$tags['app_init'][] = 'Common\Behavior\AppInitBehavior';
+
 if(defined('IN_APP') && IN_APP === true) {
 } else {
-    $tags['view_begin'] = array(
-        'Common\Behavior\WebTemplateBehavior'
-    );
-    $tags['action_begin'] = array(
-        'Common\Behavior\WebAuthBehavior'
-    );
+    $tags['view_begin'][]       = 'Common\Behavior\WebTemplateBehavior';
+    
+    $tags['action_begin'][]     = 'Common\Behavior\WebAuthBehavior';
 }
 
 return $tags;

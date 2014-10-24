@@ -36,7 +36,7 @@ class AccountController extends Controller {
                 if(empty($forward)) {
                     $forward = U('bench/welcome/index');
                 } else {
-                    $forward = U('/' . $forward);
+                    $forward = base64_decode($forward);
                 }
                 $this->success('成功登陆', $forward);
             } else {

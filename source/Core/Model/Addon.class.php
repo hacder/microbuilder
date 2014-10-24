@@ -8,15 +8,15 @@ class Addon extends Model {
     
     public static function run($params) {
         C('FRAME_ACTIVE', 'addons');
-        $a = new Addon($params['Addon']);
-        $struct = $a->getCurrentAddon();
-        $params['Addon'] = $struct['name'];
+        $params['Addon'] = parse_name($params['Addon'], 1);
         $params['Entry'] = parse_name($params['Entry'], 1);
         $params['Controller'] = parse_name($params['Controller'], 1);
         $params['Action'] = parse_name($params['Action'], 1);
+        $a = new Addon($params['Addon']);
         define('ADDON_NAME', $params['Addon']);
         define('ADDON_CURRENT_PATH', MB_ROOT . "addons/{$params['Addon']}/");
         C('ADDON_INSTANCE', $a);
+        C('TMPL_PARSE_STRING.__ADDON_PUBLIC__}', __SITE__ . "addons/{$params['Addon']}/static/");
         Addon::autoload();
         $class = "Addon\\{$params['Addon']}\\{$params['Entry']}\\Controller\\{$params['Controller']}Controller";
         if(class_exists($class)) {
@@ -25,10 +25,10 @@ class Addon extends Model {
             if(method_exists($instance, $method)) {
                 call_user_func(array($instance, $method));
             } else {
-                return error(-2, "访问的操作 {$params['Entry']}\\{$params['Controller']}\\{$params['Action']} 不存在.");
+                return error(-2, "访问的操作 {$params['Addon']}\\{$params['Entry']}\\{$params['Controller']}Controller\\{$params['Action']} 不存在.");
             }
         } else {
-            return error(-1, "访问的控制器 {$params['Entry']}\\{$params['Controller']} 不存在.");
+            return error(-1, "访问的控制器 {$params['Addon']}\\{$params['Entry']}\\{$params['Controller']}Controller 不存在.");
         }
     }
     public static function autoload() {
@@ -104,7 +104,7 @@ class Addon extends Model {
         $m = new Model();
         $addons = $m->table('__EX_ADDONS__')->where($condition)->bind($pars)->select();
         foreach($addons as &$addon) {
-            $addon['icon'] = C('COMMON.SITEPATH') . "addons/{$addon['name']}/icon.png";
+            $addon['icon'] = __SITE__ . "addons/{$addon['name']}/icon.png";
         }
         return $addons;
     }
@@ -132,7 +132,7 @@ class Addon extends Model {
             }
         }
         if(!empty($addon)) {
-            $addon['icon'] = C('COMMON.SITEPATH') . "addons/{$addon['name']}/icon.png";
+            $addon['icon'] = __SITE__ . "addons/{$addon['name']}/icon.png";
         }
         return $addon;
     }
@@ -184,7 +184,7 @@ class Addon extends Model {
     }
     
     public function U($entry, $url='', $vars='') {
-        $addon = strtolower($this->addon['name']);
+        $addon = parse_name($this->addon['name']);
         $url = "/{$entry}/extend/{$addon}/{$url}";
         return U($url, $vars);
     }
@@ -381,7 +381,7 @@ class Addon extends Model {
         $pars[':addon'] = $this->addon['name'];
         $pars[':type'] = $type;
 
-        $entries = $this->table('__EX_ADDON_ENTRIES__')->where($condition)->bind($pars)->select();
+        $entries = $this->table('__EX_ADDON_ENTRIES__')->where($condition)->bind($pars)->order('`id`')->select();
         if(!empty($entries)) {
             foreach($entries as &$entry) {
                 if(stripos($entry['url'], 'http://') === 0 || stripos($entry['url'], 'https://')) {

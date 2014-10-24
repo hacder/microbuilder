@@ -12,8 +12,9 @@ $cfg = array(
     'CHECK_APP_DIR'         =>  false,
     'SHOW_PAGE_TRACE'       =>  defined('APP_DEBUG') && APP_DEBUG,
     'ACTION_SUFFIX'         =>  'Action',
-    'SESSION_AUTO_START'    =>  false,
     'VAR_ADDON'             =>  '____',
+    'LOG_RECORD'            =>  true,
+    'LOG_PATH'              =>  LOG_PATH,
 
     'DEFAULT_MODULE'        =>  'Home',
     'DEFAULT_CONTROLLER'    =>  'Home',

@@ -1,4 +1,7 @@
 /\.idea
+
+/addons/CouponCommerce/
+
 /source/Data/
 /source/Conf/config.inc.php
 /source/Conf/install.lock

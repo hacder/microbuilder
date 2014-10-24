@@ -55,6 +55,9 @@ define(['jquery'], function($){
 		if(!elms.province) {
 			return false;
 		}
+        if(!opts) {
+            opts = {withTitle: true};
+        }
 		elms.province.options.length = 0;
 		if(opts.withTitle) {
 			elms.province.options.add(new Option('省/直辖市', ''));

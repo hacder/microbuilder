@@ -16,6 +16,9 @@
                 <li{:C('FRAME_ACTIVE') == 'member' ? ' class="active"' : ''}><a href="{:U('control/welcome/member')}"><i class="fa fa-fw fa-users"></i> 会员及粉丝</a></li>
                 <li{:C('FRAME_ACTIVE') == 'access' ? ' class="active"' : ''}><a href="{:U('control/welcome/access')}"><i class="fa fa-fw fa-sitemap"></i> 用户分权</a></li>
                 <li{:C('FRAME_ACTIVE') == 'extend' ? ' class="active"' : ''}><a href="{:U('control/welcome/extend')}"><i class="fa fa-fw fa-plug"></i> 扩展功能</a></li>
+                <if condition="defined('ADDON_NAME')">
+                    <li class="active"><a href="javascript:;"><i class="fa fa-fw fa-plus-circle"></i> {$__addon['title']}</a></li>
+                </if>
                 <!--
                 <li{:C('FRAME_ACTIVE') == 'store'  ? ' class="active"' : ''}><a href="{:U('control/welcome/store')}"><i class="fa fa-fw fa-shopping-cart"></i> 应用商店</a></li>
                 -->

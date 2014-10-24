@@ -3,6 +3,7 @@
  * 用户管理
  */
 namespace Control\Controller;
+use Core\Model\Account;
 use Core\Model\Member;
 use Think\Controller;
 
@@ -157,6 +158,35 @@ class MemberController extends Controller {
         }
         $this->assign('do', $do);
         C('FRAME_CURRENT', U('control/member/credit'));
+        $this->display();
+    }
+    
+    public function passportAction() {
+        $a = new Account();
+        $accounts = array();
+        $weixins = $a->table('__PLATFORM_WEIXIN__')->field('id')->where("`level`=2")->select();
+        if(!empty($weixins)) {
+            $ids = coll_neaten($weixins, 'id');
+            if(IS_POST) {
+                $select = I('post.select');
+                if($select == '0' || in_array($select, $ids)) {
+                    Member::loadSettings();
+                    $setting = C('MS');
+                    $setting[Member::OPT_AUTH_WEIXIN] = $select;
+                    Member::saveSettings($setting);
+                    $this->success('处理成功');
+                    exit;
+                }
+            }
+            $accounts = $a->table('__PLATFORMS__')->where('`id` IN (' . implode(',', $ids) . ')')->select();
+        }
+        Member::loadSettings();
+        $setting = C('MS');
+        $auth = $setting[Member::OPT_AUTH_WEIXIN];
+        
+        $this->assign('auth', $auth);
+        $this->assign('accounts', $accounts);
+        C('FRAME_CURRENT', U('control/member/passport'));
         $this->display();
     }
 }

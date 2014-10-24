@@ -6,20 +6,49 @@
  * @return string
  */
 function AU($url='', $vars='') {
-    $entry = strtolower(MODULE_NAME);
-    $addon = strtolower(ADDON_NAME);
-    if(empty($entry) || empty($addon)) {
+    if(!defined('MODULE_NAME') || !defined('ADDON_NAME')) {
         trigger_error('当前上下文不支持这个函数AU', E_USER_ERROR);
     }
-    $url = "/{$entry}/extend/{$addon}/{$url}";
+    $entry = parse_name(MODULE_NAME);
+    $addon = parse_name(ADDON_NAME);
+    if($entry == 'app') {
+        $url = "/extend/{$addon}/{$url}";
+    } else {
+        $url = "/{$entry}/extend/{$addon}/{$url}";
+    }
     return U($url, $vars);
 }
 
+function MU() {
+    
+}
+
+function WU() {
+    
+}
+
+function MAU() {
+    
+}
+
+function WAU() {
+    
+    
+}
+
+function inputRaw($jsonDecode = true) {
+    $post = file_get_contents('php://input');
+    if($jsonDecode) {
+        $post = @json_decode($post, true);
+    }
+    return $post;
+}
+
 function attach($path) {
-    if(stripos('http://', $path) === 0 || stripos('https://', $path) === 0) {
+    if(stripos($path, 'http://') === 0 || stripos($path, 'https://') === 0) {
         return $path;
     } else {
-        return C('COMMON.SITEPATH') . $path;
+        return rtrim(__SITE__, '/') . $path;
     }
 }
 

@@ -13,17 +13,19 @@
     </div>
     <script>
         require(['jquery', 'util'], function($, u){
-            $('#theform').submit(function(){
-                if($.trim($('input[name="title"]').val()) == '') {
-                    u.message('必须输入服务窗名称');
-                    return false;
-                }
-                <if condition="empty($entity)">
-                    if($.trim($('input[name="qr"]').val()) == '') {
-                        u.message('必须上传服务窗二维码');
+            $(function(){
+                $('#theform').submit(function(){
+                    if($.trim($('input[name="title"]').val()) == '') {
+                        u.message('必须输入服务窗名称');
                         return false;
                     }
-                </if>
+                    <if condition="empty($entity)">
+                        if($.trim($('input[name="qr"]').val()) == '') {
+                            u.message('必须上传服务窗二维码');
+                            return false;
+                        }
+                    </if>
+                });
             });
         });
     </script>
@@ -96,7 +98,6 @@
                                 }, function() {
                                     u.message('成功复制商家公钥, 请访问支付宝平台进行接入 <br /><if condition="!$isGen"><strong>注意: 接入之前请保存密钥对.</strong></if>');
                                 });
-                                u.clip($('#copy-url')[0], $('#copy-url').text());
                                 $('#gen-key').click(function(){
                                     $.post(location.href, {method: 'generate'}).success(function(dat){
                                         var json = $.parseJSON(dat);
@@ -112,6 +113,7 @@
                                     $('#gen-key').trigger('click');
                                 }
                                 $('#copy-url abbr').html(location.protocol + '//' + location.host + $('#copy-url abbr').text());
+                                u.clip($('#copy-url')[0], $('#copy-url').text());
                             });
                         });
                     </script>

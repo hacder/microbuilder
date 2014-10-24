@@ -65,10 +65,13 @@ abstract class Platform {
      */
     public static function create($id) {
         $p = new Account();
-        $platform = $p->getPlatform($id);
+        $platform = $p->getAccount($id);
         if(!empty($platform)) {
             if($platform['type'] == Account::ACCOUNT_ALIPAY) {
                 return new Alipay($platform);
+            }
+            if($platform['type'] == Account::ACCOUNT_WEIXIN) {
+                return new WeiXin($platform);
             }
         }
         return null;
@@ -165,7 +168,7 @@ abstract class Platform {
     /**
      * 查询当前公号支持的响应类型
      *
-     * 微擎当前支持的类型包括:<br/>
+     * 当前支持的类型包括:<br/>
      * &nbsp;&nbsp;&nbsp; text, image, voice, video, music, news, link, card
      *
      * @return array 当前公号支持的响应结构集合

@@ -36,7 +36,7 @@ class WebAuthBehavior {
 
         //无用户身份, 只能访问Wander
         if((empty($session) || empty($session['USER'])) && !in_array($module, array('Wander', 'Api'))) {
-            redirect(U('/wander/account/login?forward=' . __INFO__));
+            redirect(U('/wander/account/login?forward=' . base64_encode($_SERVER['REQUEST_URI'])));
             exit;
         }
     }

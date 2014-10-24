@@ -54,7 +54,6 @@ class WebTemplateBehavior {
         $allAddons = array();
         if($name == 'extend') {
             $types = Addon::types();
-            unset($types['app']);
             foreach($types as $type) {
                 $addons = Addon::getAddons($type['name']);
                 $allAddons = array_merge($allAddons, coll_key($addons, 'name'));
@@ -65,7 +64,8 @@ class WebTemplateBehavior {
                         $entryType = strtolower(MODULE_NAME);
                         $entries = $addon->getEntries($entryType);
                         if(!empty($entries)) {
-                            $items[] = array('icon' => 'plus', 'title' => $a['title'], 'url' => U("/{$entryType}/extend/{$a['name']}"));
+                            $addonName = parse_name($a['name']);
+                            $items[] = array('icon' => 'plus', 'title' => $a['title'], 'url' => U("/{$entryType}/extend/{$addonName}"));
                         }
                     }
                 }
@@ -244,7 +244,7 @@ class WebTemplateBehavior {
                     ),
                     array(
                         'icon'  => 'retweet',
-                        'title' => '第三方登录',
+                        'title' => '会员资料整合',
                         'url'   => U('control/member/passport')
                     ),
                 )

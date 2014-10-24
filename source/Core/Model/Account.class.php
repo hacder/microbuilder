@@ -43,6 +43,19 @@ class Account extends Model {
             $record['id'] = $id;
             $this->table('__PLATFORM_ALIPAY__')->data($record)->add();
         }
+        if($type == self::ACCOUNT_WEIXIN) {
+            $record = array();
+            $record['id'] = $id;
+            $record['token'] = '';
+            $record['aeskey'] = '';
+            $record['access_token'] = I('post.access_token');
+            $record['access_expire'] = I('post.access_expire');
+            $record['level'] = util_limit(I('post.level'), 0, 2);
+            $record['appid'] = I('post.appid');
+            $record['secret'] = I('post.secret');
+            $this->table('__PLATFORM_WEIXIN__')->data($record)->add();
+        }
+    
 
         $cfg = C('UPLOAD');
         $cfg['rootPath'] = MB_ROOT . 'attachment/qr/';
@@ -50,12 +63,12 @@ class Account extends Model {
         $cfg['saveName'] = $id;
         $cfg['replace'] = true;
         $uploader = new Upload($cfg);
-        $ret = $uploader->uploadOne($_FILES['qr']);
-        if(empty($ret)) {
+        $uploadRet = $uploader->uploadOne($_FILES['qr']);
+        if(empty($uploadRet)) {
             return error(-4, $uploader->getError());
         }
         $rec = array();
-        $rec['qr'] = '/attachment/qr/' . $ret['savename'];
+        $rec['qr'] = '/attachment/qr/' . $uploadRet['savename'];
         $ret = $this->table('__PLATFORMS__')->data($rec)->where("`id`='{$id}'")->save();
         if($ret === false) {
             return error(-5, '保存失败, 请稍后重试');
@@ -96,11 +109,20 @@ class Account extends Model {
 
         if($type == self::ACCOUNT_ALIPAY) {
         }
+        if($type == self::ACCOUNT_WEIXIN) {
+            $record = array();
+            $record['access_token'] = I('post.access_token');
+            $record['access_expire'] = I('post.access_expire');
+            $record['level'] = util_limit(I('post.level'), 0, 2);
+            $record['appid'] = I('post.appid');
+            $record['secret'] = I('post.secret');
+            $this->table('__PLATFORM_WEIXIN__')->data($record)->where("`id`='{$id}'")->save();
+        }
         return true;
     }
     
     public function remove($id) {
-        $account = $this->getPlatform($id);
+        $account = $this->getAccount($id);
         if(!empty($account)) {
             if($account['type'] == self::ACCOUNT_ALIPAY) {
                 $this->table('__PLATFORM_ALIPAY__')->where("`id`='{$id}'")->delete();
@@ -111,7 +133,7 @@ class Account extends Model {
         return false;
     }
 
-    public function getPlatform($id, $type = '') {
+    public function getAccount($id, $type = '') {
         $condition = '`id`=:id';
         $pars = array();
         $pars[':id'] = $id;
@@ -124,6 +146,10 @@ class Account extends Model {
             if($account['type'] == self::ACCOUNT_ALIPAY) {
                 $alipay = $this->table('__PLATFORM_ALIPAY__')->where('`id`=:id')->bind(array(':id'=>$id))->find();
                 $account = array_merge($account, $alipay);
+            }
+            if($account['type'] == self::ACCOUNT_WEIXIN) {
+                $weixin = $this->table('__PLATFORM_WEIXIN__')->where('`id`=:id')->bind(array(':id'=>$id))->find();
+                $account = array_merge($account, $weixin);
             }
         }
         return $account;

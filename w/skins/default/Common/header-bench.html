@@ -18,7 +18,7 @@
                 -->
                 <li{:C('FRAME_ACTIVE') == 'extend' ? ' class="active"' : ''}><a href="{:U('bench/welcome/extend')}"><i class="fa fa-fw fa-plus"></i> 更多功能</a></li>
                 <if condition="defined('ADDON_NAME')">
-                    <li class="active"><a href="{:U('bench/welcome/extend')}"><i class="fa fa-fw fa-plus-circle"></i> {$__addon['title']}</a></li>
+                    <li class="active"><a href="javascript:;"><i class="fa fa-fw fa-plus-circle"></i> {$__addon['title']}</a></li>
                 </if>
                 <!--
                 <li{:C('FRAME_ACTIVE') == 'analyze' ? ' class="active"' : ''}><a href="{:U('bench/welcome/analyze')}"><i class="fa fa-fw fa-line-chart"></i> 数据分析</a></li>
